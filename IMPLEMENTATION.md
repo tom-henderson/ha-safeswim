@@ -13,6 +13,7 @@ custom_components/safeswim/
 ├── config_flow.py          # UI configuration flow
 ├── const.py                # Constants and configuration keys
 ├── coordinator.py          # Data update coordinator
+├── icons.py                # SVG map icons (data URIs) for water quality states
 ├── manifest.json           # Integration metadata
 ├── sensor.py               # 11 sensor entity implementations
 ├── strings.json            # UI strings
@@ -39,6 +40,7 @@ custom_components/safeswim/
 - ✅ Device registry integration with proper grouping
 - ✅ Reconfigure support for changing locations
 - ✅ Proper error handling with retry logic
+- ✅ Map integration - beaches appear on Home Assistant map with color-coded water quality icons
 
 ### Sensor Entities (11 per location)
 
@@ -47,6 +49,7 @@ custom_components/safeswim/
    - Dynamic icons based on quality
    - 24-hour forecast in attributes
    - Quality descriptions included
+   - GPS coordinates (latitude/longitude) for map display
 
 2. **Water Temperature Sensor**
    - Device class: Temperature
@@ -225,6 +228,31 @@ sensor.safeswim_<location_slug>_location_info
 4. **Alerts**: Parsed but not as separate sensors
 5. **Webcam**: camId available but not implemented
 
+## �️ Map Integration
+
+All beach locations automatically appear on the Home Assistant map with color-coded icons:
+- Water quality sensors include GPS coordinates (latitude/longitude)
+- Each beach displays a colored circle icon indicating current water quality:
+  - **🔵 Blue circle with checkmark** = GREEN (safe for swimming)
+  - **⚪ Grey circle with question mark** = GREY (uncertain quality)
+  - **🟠 Orange circle with exclamation** = RED (poor quality)
+  - **🔴 Red circle with exclamation** = RED+ (permanently poor)
+  - **⚫ Black circle with X** = BLACK (do not swim)
+- Click any beach marker to view full sensor details
+- Perfect for monitoring multiple beaches at a glance
+- Icons update automatically every 30 minutes
+
+**To view the map:**
+1. Go to **Overview** or any dashboard
+2. Add a **Map Card**
+3. All Safe Swim beach locations will appear with color-coded icons
+
+**Technical implementation:**
+- Icons are SVG images embedded as data URIs
+- No external dependencies required
+- Defined in [icons.py](custom_components/safeswim/icons.py#L1)
+- Applied via `entity_picture` property
+
 ## 🔮 Future Enhancements (Not in v1.0)
 
 1. Binary sensor for "good swimming conditions"
@@ -235,8 +263,7 @@ sensor.safeswim_<location_slug>_location_info
 6. Distance calculation from home
 7. HACS publication
 8. Unit tests
-9. Improved tide parsing (high/low identification)
-10. Integration with weather platforms
+9. Integration with weather platforms
 
 ## 📚 Documentation Files
 

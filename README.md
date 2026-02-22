@@ -5,6 +5,7 @@ A Home Assistant integration to track and display water quality and weather data
 ## Features
 
 - 🏖️ **200+ Locations**: Monitor any beach or swimming spot in New Zealand covered by Safe Swim
+- 🗺️ **Map Display**: All beach locations appear on the Home Assistant map with color-coded water quality icons
 - 🌊 **Water Quality**: Real-time water quality status (GREEN/GREY/RED/RED+/BLACK)
 - 🌡️ **Temperature Monitoring**: Both water and air temperature tracking
 - 🌊 **Tide Information**: Current tide levels and upcoming tide events
@@ -135,6 +136,39 @@ hazards: ["Strong currents", "Unstable cliff", ...]
 alerts: []
 patrols: []
 ```
+
+## 🗺️ Viewing Beaches on the Map
+
+All beach locations automatically appear on the Home Assistant map with color-coded icons:
+
+### Adding the Map Card
+
+1. Go to any dashboard
+2. Click **Edit Dashboard**
+3. Click **+ Add Card**
+4. Search for and select **Map**
+5. Save
+
+### Understanding the Map Icons
+
+Each beach displays a colored circle indicating current water quality:
+- � **Green circle with checkmark (✓)** = GREEN (safe for swimming)
+- ⚪ **Grey circle with question mark (?)** = GREY (uncertain quality)
+- 🔴 **Red circle** = RED (poor quality)
+- 🔴 **Red circle with exclamation (!)** = RED+ (permanently poor quality)
+- ⚫ **Black circle with X (×)** = BLACK (do not swim)
+
+**Click any marker** to view:
+- All current conditions (temperature, tide, wind, UV)
+- 24-hour forecast data
+- Full sensor details
+
+### Tips
+
+- Perfect for monitoring multiple beaches at a glance - instantly see water quality across all locations
+- Icons update automatically every 30 minutes with the latest data
+- The water quality sensor includes GPS coordinates in its attributes (`latitude`, `longitude`)
+- Color-coded icons also appear in entity cards and more info dialogs
 
 ## Configuration
 

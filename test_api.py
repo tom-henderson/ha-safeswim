@@ -121,6 +121,23 @@ async def test_api():
         except SafeSwimAPIError as e:
             print(f"   ⚠️  Error: {e}\n")
         
+        # Test 5: Verify GPS coordinates for map display
+        print("5️⃣  Verifying GPS coordinates for map display...")
+        try:
+            data = await get_location_forecast(session, test_slug)
+            if data:
+                lat = data.get("latitude")
+                lon = data.get("longitude")
+                if lat is not None and lon is not None:
+                    print(f"   ✅ Location has GPS coordinates: {lat}, {lon}")
+                    print(f"   📍 This location will appear on Home Assistant map\n")
+                else:
+                    print(f"   ⚠️  Missing GPS coordinates (lat: {lat}, lon: {lon})\n")
+            else:
+                print(f"   ❌ Could not fetch location data\n")
+        except SafeSwimAPIError as e:
+            print(f"   ⚠️  Error: {e}\n")
+        
         print("✅ All tests completed successfully!")
         return True
 

@@ -49,6 +49,7 @@ from .const import (
     WEATHER_SUN,
 )
 from .coordinator import SafeSwimCoordinator
+from .icons import get_quality_icon
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -268,6 +269,8 @@ SENSOR_TYPES: tuple[SafeSwimSensorEntityDescription, ...] = (
                     data["forecasts"], FORECAST_WATER_QUALITY
                 )
             ),
+            "latitude": data["location"].get("latitude"),
+            "longitude": data["location"].get("longitude"),
         },
     ),
     SafeSwimSensorEntityDescription(
@@ -600,6 +603,15 @@ class SafeSwimSensor(CoordinatorEntity[SafeSwimCoordinator], SensorEntity):
         
         # Default icon from description
         return self.entity_description.icon
+
+    @property
+    def entity_picture(self) -> str | None:
+        """Return the entity picture for map display."""
+        # Only set entity_picture for water quality sensor to show on map
+        if self.entity_description.key == "water_quality":
+            quality = self.native_value
+            return get_quality_icon(quality)
+        return None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
