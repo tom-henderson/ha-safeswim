@@ -152,7 +152,7 @@ All beach locations automatically appear on the Home Assistant map with color-co
 ### Understanding the Map Icons
 
 Each beach displays a colored circle indicating current water quality:
-- � **Green circle with checkmark (✓)** = GREEN (safe for swimming)
+- 🟢 **Green circle with checkmark (✓)** = GREEN (safe for swimming)
 - ⚪ **Grey circle with question mark (?)** = GREY (uncertain quality)
 - 🔴 **Red circle** = RED (poor quality)
 - 🔴 **Red circle with exclamation (!)** = RED+ (permanently poor quality)
@@ -449,15 +449,7 @@ All data is provided by [Safe Swim](https://safeswim.org.nz/), a water quality m
 
 ## License
 
-MIT License - See LICENSE file for details
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## Support
-
-For issues and feature requests, please use the [GitHub issue tracker](https://github.com/yourusername/ha-safeswim/issues).
+MIT License
 
 ## Changelog
 
