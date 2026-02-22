@@ -1,0 +1,67 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Select Beach Location",
+        "description": "Choose a beach or swimming location to monitor.",
+        "data": {
+          "location_slug": "Location"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Beach Location",
+        "description": "Select a different beach or swimming location.",
+        "data": {
+          "location_slug": "Location"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Unable to connect to Safe Swim API. Please check your internet connection and try again.",
+      "no_locations": "No locations available from Safe Swim API.",
+      "location_not_found": "The selected location was not found.",
+      "unknown": "An unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This location is already configured.",
+      "reconfigure_failed": "Reconfiguration failed. Please try again."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "water_quality": {
+        "name": "Water Quality"
+      },
+      "water_temperature": {
+        "name": "Water Temperature"
+      },
+      "air_temperature": {
+        "name": "Air Temperature"
+      },
+      "tide_direction": {
+        "name": "Tide Direction"
+      },
+      "next_high_tide": {
+        "name": "Next High Tide"
+      },
+      "next_low_tide": {
+        "name": "Next Low Tide"
+      },
+      "uv_index": {
+        "name": "UV Index"
+      },
+      "weather": {
+        "name": "Weather"
+      },
+      "wind_direction": {
+        "name": "Wind Direction"
+      },
+      "wind_speed": {
+        "name": "Wind Speed"
+      },
+      "location_info": {
+        "name": "Location Info"
+      }
+    }
+  }
+}
