@@ -1,12 +1,13 @@
 {
   "domain": "safeswim",
   "name": "Safe Swim",
-  "codeowners": [],
+  "codeowners": ["@tom-henderson"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/yourusername/ha-safeswim",
+  "documentation": "https://github.com/tom-henderson/ha-safeswim",
   "integration_type": "service",
   "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/tom-henderson/ha-safeswim/issues",
   "requirements": ["aiohttp>=3.9.0"],
   "version": "1.0.0"
 }

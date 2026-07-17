@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This repo is only public to make it easier to install & update with HACS. It is 100% vibe-coded, and I have no intention of supporting it beyond my personal needs.
+
 # Safe Swim - Home Assistant Integration
 
 A Home Assistant integration to track and display water quality and weather data from [Safe Swim](https://safeswim.org.nz/) for New Zealand beaches and swimming locations.
@@ -23,7 +26,22 @@ A Home Assistant integration to track and display water quality and weather data
 
 ## Installation
 
-### Method 1: Manual Installation
+### Method 1: HACS (recommended)
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=tom-henderson&repository=ha-safeswim&category=integration)
+
+1. Make sure [HACS](https://hacs.xyz/) is installed.
+2. In HACS, go to **Integrations**, open the three-dot menu, and choose **Custom repositories**.
+3. Add `https://github.com/tom-henderson/ha-safeswim` with the category **Integration** (skip this step once the integration is available in the default HACS store).
+4. Search for **Safe Swim** in HACS and click **Download**.
+5. Restart Home Assistant.
+6. Add the integration:
+   - Go to **Settings** → **Devices & Services**
+   - Click **+ Add Integration**
+   - Search for "Safe Swim"
+   - Select your beach location from the dropdown
+
+### Method 2: Manual Installation
 
 1. Copy the `custom_components/safeswim` directory to your Home Assistant `config/custom_components/` directory:
    ```bash
@@ -39,7 +57,7 @@ A Home Assistant integration to track and display water quality and weather data
    - Search for "Safe Swim"
    - Select your beach location from the dropdown
 
-### Method 2: Git Clone (Development)
+### Method 3: Git Clone (Development)
 
 ```bash
 cd /config/custom_components

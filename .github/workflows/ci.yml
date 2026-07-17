@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+# Allow the release job to create tags/releases and upload assets.
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  hassfest:
+    name: Validate with hassfest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master
+
+  release:
+    name: Release
+    needs: [hassfest]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # need full history + tags to derive the version and push back
+      # Version is owned by CI, not by feature PRs (which no longer touch the
+      # manifest). The next version is derived from the latest git tag and
+      # patch-bumped; a manifest version that is *ahead* of the latest tag wins,
+      # which is how an intentional minor/major bump is requested.
+      - name: Compute next version
+        id: ver
+        run: |
+          git fetch --tags --force
+          LATEST=$(git tag -l 'v*' | sed 's/^v//' | sort -V | tail -n1)
+          MANIFEST=$(python3 -c "import json;print(json.load(open('custom_components/safeswim/manifest.json'))['version'])")
+          if [ -z "$LATEST" ]; then
+            NEXT="$MANIFEST"
+          else
+            IFS=. read -r MA MI PA <<<"$LATEST"
+            PATCH="$MA.$MI.$((PA + 1))"
+            HIGHEST=$(printf '%s\n%s\n' "$LATEST" "$MANIFEST" | sort -V | tail -n1)
+            if [ "$HIGHEST" = "$MANIFEST" ] && [ "$MANIFEST" != "$LATEST" ]; then
+              NEXT="$MANIFEST" # manifest ahead of tags -> honour a manual minor/major bump
+            else
+              NEXT="$PATCH"
+            fi
+          fi
+          echo "version=$NEXT" >> "$GITHUB_OUTPUT"
+          echo "Next version: $NEXT (latest tag: ${LATEST:-none}, manifest: $MANIFEST)"
+      - name: Skip if this version is already released
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "v${{ steps.ver.outputs.version }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Stamp the version into the manifest
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path("custom_components/safeswim/manifest.json")
+          data = json.loads(p.read_text())
+          data["version"] = "${{ steps.ver.outputs.version }}"
+          p.write_text(json.dumps(data, indent=2) + "\n")
+          PY
+      - name: Package the integration
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          mkdir -p artifacts
+          (cd custom_components && zip -r ../artifacts/safeswim.zip safeswim -x '*/__pycache__/*')
+      - name: Create release and upload artifacts
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.ver.outputs.version }}" \
+            artifacts/safeswim.zip \
+            --title "v${{ steps.ver.outputs.version }}" \
+            --generate-notes
+      # Keep the repo manifest in step with the release. Best-effort: if a branch
+      # protection rule blocks the push, the release is still cut (the next run
+      # derives from the tag regardless). [skip ci] avoids re-triggering CI.
+      - name: Commit the stamped version back to the default branch
+        if: steps.check.outputs.exists == 'false'
+        continue-on-error: true
+        run: |
+          if git diff --quiet -- custom_components/safeswim/manifest.json; then
+            echo "manifest already current; nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add custom_components/safeswim/manifest.json
+          git commit -m "chore(release): v${{ steps.ver.outputs.version }} [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
