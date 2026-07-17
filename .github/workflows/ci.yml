@@ -29,9 +29,11 @@ jobs:
       - uses: hacs/action@main
         with:
           category: integration
-          # `brands` fails until the integration is registered in
-          # home-assistant/brands; skip it so the rest still validates.
-          ignore: brands
+          # Skip checks that depend on registrations/settings outside this repo:
+          # `brands` needs the integration listed in home-assistant/brands, and
+          # `topics`/`description` are GitHub repo settings (only required for
+          # HACS *default store* inclusion, not for a custom-repo install).
+          ignore: brands topics description
 
   release:
     name: Release
