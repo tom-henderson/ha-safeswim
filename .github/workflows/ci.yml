@@ -78,7 +78,10 @@ jobs:
         if: steps.check.outputs.exists == 'false'
         run: |
           mkdir -p artifacts
-          (cd custom_components && zip -r ../artifacts/safeswim.zip safeswim -x '*/__pycache__/*')
+          # HACS `zip_release` extracts the archive *into* custom_components/safeswim,
+          # so the zip must contain the integration's files at its root. Zipping the
+          # safeswim/ folder itself would double-nest to custom_components/safeswim/safeswim.
+          (cd custom_components/safeswim && zip -r ../../artifacts/safeswim.zip . -x '*/__pycache__/*')
       - name: Create release and upload artifacts
         if: steps.check.outputs.exists == 'false'
         env:
